@@ -3,6 +3,7 @@ import { useState } from "react";
 import { styled } from "styled-components";
 import { auth } from "../firebase";
 import { useNavigate } from "react-router-dom";
+import { FirebaseError } from "@firebase/util";
 
 const Wrapper = styled.div`
   height: 100%;
@@ -23,6 +24,7 @@ const Form = styled.form`
   flex-direction: column;
   gap: 10px;
   width: 100%;
+  margin-bottom : 10px;
 `;
 
 const Input = styled.input`
@@ -60,15 +62,17 @@ export default function CreateAccount() {
       setName(value);
     } else if (name === "email") {
       setEmail(value);
-    } else if (name === "password") {
+    } else if (name === "password") { 
       setPassword(value);
     }
   };
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setError("");
     // 만약 이름,이메일,비밀번호가 비어있거나 로딩중이면 kill the function
     if (loading || name === "" || email === "" || password === "") return;
     try {
+      setLoading(true); // 임시
       // create user.
       const credentials = await createUserWithEmailAndPassword(
         auth,
@@ -82,11 +86,13 @@ export default function CreateAccount() {
       // redirect to the home page
       navigate("/");
     } catch (e) {
-      // error
+      // error가 FirebaseError객체의 에러이면 객체가 가지고있는 code, message를 보여주도록 설정
+      if (e instanceof FirebaseError) {
+        setError(e.message);
+      }
     } finally {
       setLoading(false);
     }
-    console.log(name, email, password);
   };
 
   return (
@@ -122,7 +128,7 @@ export default function CreateAccount() {
             type="submit"
             value={loading ? "Loading..." : "Create Account"}
           />
-          {error! == "" ? <Error>{error}</Error> : null}
+          {error !== "" ? <Error>{error}</Error> : null}
         </Form>
       </Wrapper>
     </>
