@@ -1,50 +1,21 @@
-import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 import { useState } from "react";
-import { styled } from "styled-components";
 import { auth } from "../firebase";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FirebaseError } from "@firebase/util";
-
-const Wrapper = styled.div`
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  width: 420px;
-  padding: 50px 0px;
-`;
-
-const Title = styled.h1`
-  font-size: 42px;
-`;
-
-const Form = styled.form`
-  margin-top: 50px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 100%;
-  margin-bottom : 10px;
-`;
-
-const Input = styled.input`
-  padding: 10px 20px;
-  border-radius: 50px;
-  border: none;
-  width: 100%;
-  font-size: 16px;
-  &[type="submit"] {
-    cursor: pointer;
-    &:hover {
-      opacity: 0.8;
-    }
-  }
-`;
-
-const Error = styled.span`
-  font-weight: 600;
-  color: tomato;
-`;
+import {
+  Form,
+  Error,
+  Input,
+  Switcher,
+  Title,
+  Wrapper,
+} from "../components/auth-components";
+import GithubButton from "../components/github-btn";
 
 export default function CreateAccount() {
   const navigate = useNavigate();
@@ -69,8 +40,9 @@ export default function CreateAccount() {
     // 만약 이름,이메일,비밀번호가 비어있거나 로딩중이면 kill the function
     if (loading || email === "" || password === "") return;
     try {
-      setLoading(true); // 임시
-      
+      setLoading(true);
+      // signInWithEmailAndPassword는 이메일과 패스워드가 정확하면 사용자를 반환함
+      await signInWithEmailAndPassword(auth, email, password);
       // redirect to the home page
       navigate("/");
     } catch (e) {
@@ -95,7 +67,7 @@ export default function CreateAccount() {
             placeholder="Email"
             type="email"
             required
-          />  
+          />
           <Input
             onChange={onChange}
             name="password"
@@ -104,12 +76,14 @@ export default function CreateAccount() {
             type="password"
             required
           />
-          <Input
-            type="submit"
-            value={loading ? "Loading..." : "Create Account"}
-          />
-          {error !== "" ? <Error>{error}</Error> : null}
+          <Input type="submit" value={loading ? "Loading..." : "Login"} />
         </Form>
+        {error !== "" ? <Error>{error}</Error> : null}
+        <Switcher>
+          Don't have an account?{" "}
+          <Link to="/create-account">Create one &rarr;</Link>
+        </Switcher>
+        <GithubButton />
       </Wrapper>
     </>
   );
