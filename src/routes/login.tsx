@@ -17,7 +17,7 @@ import {
 } from "../components/auth-components";
 import GithubButton from "../components/github-btn";
 
-export default function CreateAccount() {
+export default function Login() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [email, setEmail] = useState("");

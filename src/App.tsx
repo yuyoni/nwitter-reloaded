@@ -1,4 +1,4 @@
-import { createElement, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import Layout from "./components/layout";
 import Home from "./routes/home";
@@ -14,10 +14,14 @@ import ProtectedRoute from "./components/protected-route";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <ProtectedRoute><Layout /></ProtectedRoute>,
+    element: (
+      <ProtectedRoute>
+        <Layout />
+      </ProtectedRoute>
+    ),
     children: [
       { path: "", element: <Home /> },
-      { path: "profile", element: <Profile /> }, 
+      { path: "profile", element: <Profile /> },
     ],
   },
   {
