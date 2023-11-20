@@ -90,7 +90,7 @@ export default function PostTweetForm() {
       // 파라미터로 어떤 컬렉션에 document 생성할건지, 어떤 내용인지를 받음
       const doc = await addDoc(collection(db, "tweets"), {
         tweet,
-        createAt: Date.now(),
+        createdAt: Date.now(),
         username: user.displayName || "Anonymous",
         userId: user.uid,
       });
